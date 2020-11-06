@@ -27,8 +27,8 @@ public class TokenServiceConnector implements TokenService {
 	public String createToken(AccountEntity accountEntity) {
 
 		RestTemplate restTemplate = new RestTemplate();
-//		String endPoint = "http://propets-token.herokuapp.com/validation/en/v1/create/entity";
-		String endPoint = "http://localhost:8082/validation/en/v1/create/entity";
+		String endPoint = "http://propets-token.herokuapp.com/validation/en/v1/create/entity";
+//		String endPoint = "http://localhost:8082/validation/en/v1/create/entity";
 
 		URI uri;
 		try {
@@ -49,7 +49,7 @@ public class TokenServiceConnector implements TokenService {
 	@Override
 	public String createToken(String email, String pass, HashSet<AccountingRoles> roles) {
 
-		String endPoint = "http://localhost:8082/validation/en/v1/create/email";
+		String endPoint = "http://propets-token.herokuapp.com/validation/en/v1/create/email";
 		RestTemplate restTemplate = new RestTemplate();
 
 		URI uri;
@@ -71,7 +71,7 @@ public class TokenServiceConnector implements TokenService {
 
 	@Override
 	public String validateToken(String token) {
-		String endPoint = "http://localhost:8082/validation/en/v1/validate";
+		String endPoint = "http://propets-token.herokuapp.com/validation/en/v1/validate";
 		RestTemplate restTemplate = new RestTemplate();
 
 		URI uri;
@@ -92,7 +92,7 @@ public class TokenServiceConnector implements TokenService {
 
 	@Override
 	public String[] decompileToken(String token) {
-		String endPoint = "http://localhost:8082/validation/en/v1/decompile";
+		String endPoint = "http://propets-token.herokuapp.com/validation/en/v1/decompile";
 		RestTemplate restTemplate = new RestTemplate();
 
 		URI uri;
@@ -113,7 +113,7 @@ public class TokenServiceConnector implements TokenService {
 
 	@Override
 	public String[] validateAuth(String token) {
-		String endPoint = "http://localhost:8082/validation/en/v1/auth";
+		String endPoint = "http://propets-token.herokuapp.com/validation/en/v1/auth";
 		RestTemplate restTemplate = new RestTemplate();
 
 		URI uri;
