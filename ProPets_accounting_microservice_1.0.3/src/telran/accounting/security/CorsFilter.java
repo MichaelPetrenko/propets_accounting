@@ -27,6 +27,7 @@ public class CorsFilter implements Filter {
 		response.addHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Token");
 		if (request.getMethod().equals("OPTIONS")) {
 			response.setStatus(HttpServletResponse.SC_ACCEPTED);
+			//For not-simple requests - need for browser.
 			return;
 		}
 		chain.doFilter(request, response);
