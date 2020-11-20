@@ -54,7 +54,7 @@ public class AddDelFavActivFilter implements Filter {
 			String login = request.getServletPath().split("/")[4];
 			
 			if(!login.equals(credentials[0])) {
-				response.sendError(400);
+				response.sendError(403);
 				return;
 			}
 
