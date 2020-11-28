@@ -2,6 +2,7 @@ package telran.accounting.api;
 
 public interface AccountingApiConstants {
 
+	//for initial commit in new branch
 	String REGISTER = 				"/account/en/v1/registration";
 	String LOGIN = 					"/account/en/v1/login";
 	String USER_INFO = 				"/account/en/v1/{login}/info";
