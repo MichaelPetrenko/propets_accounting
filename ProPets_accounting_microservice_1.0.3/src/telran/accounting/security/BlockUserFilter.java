@@ -37,7 +37,7 @@ public class BlockUserFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
 		
-		if (request.getServletPath().matches("/account/en/v1/[^/]+/block/[^/]+")) {
+		if (request.getServletPath().matches("/en/v1/[^/]+/block/[^/]+")) {
 			String token = dataCheck.gettingToken(request, "X-Token");
 			if (token == null) {
 				response.sendError(401);
@@ -59,7 +59,7 @@ public class BlockUserFilter implements Filter {
 				return;
 			}
 			
-			String status = request.getServletPath().split("/")[6];
+			String status = request.getServletPath().split("/")[5];
 			if(!(status.equalsIgnoreCase("true") || status.equalsIgnoreCase("false"))) {
 				response.sendError(400);
 				return;

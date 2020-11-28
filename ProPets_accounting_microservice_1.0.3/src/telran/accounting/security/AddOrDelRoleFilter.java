@@ -38,7 +38,7 @@ public class AddOrDelRoleFilter implements Filter {
 
 //		"/account/en/v1/{login}/role/{role}";
 //		"/account/en/v1/{login}/role/{role}";
-		if (request.getServletPath().matches("/account/en/v1/[^/]+/role/[^/]+")) {
+		if (request.getServletPath().matches("/en/v1/[^/]+/role/[^/]+")) {
 			
 			String token = dataCheck.gettingToken(request, "X-Token");
 			

@@ -35,7 +35,7 @@ public class GetUserInformationFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
 
-		if (request.getServletPath().matches("/account/en/v1/[^/]+/info")) {
+		if (request.getServletPath().matches("/en/v1/[^/]+/info")) {
 
 			String token = dataCheck.gettingToken(request, "X-Token");
 			if (token == null) {
@@ -49,7 +49,7 @@ public class GetUserInformationFilter implements Filter {
 				return;
 			}
 
-			String login = request.getServletPath().split("/")[4];
+			String login = request.getServletPath().split("/")[3];
 
 			if (!login.equals(credentials[0])) {
 				response.sendError(400);

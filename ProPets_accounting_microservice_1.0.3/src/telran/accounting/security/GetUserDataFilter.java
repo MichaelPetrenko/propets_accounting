@@ -35,7 +35,7 @@ public class GetUserDataFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
 
-		if (request.getServletPath().matches("/account/en/v1/[^/\\?]+")
+		if (request.getServletPath().matches("/en/v1/[^/\\?]+")
 				&& request.getMethod().equalsIgnoreCase("GET")) {
 
 			String token = dataCheck.gettingToken(request, "X-Token");
@@ -50,7 +50,7 @@ public class GetUserDataFilter implements Filter {
 				return;
 			}
 			
-			String login = request.getServletPath().split("/")[4];
+			String login = request.getServletPath().split("/")[3];
 
 			if (!login.equals(credentials[0])) {
 				response.sendError(403);

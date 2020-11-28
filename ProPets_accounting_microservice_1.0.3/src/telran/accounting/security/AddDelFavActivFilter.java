@@ -38,8 +38,8 @@ public class AddDelFavActivFilter implements Filter {
 //		"/account/en/v1/{login}/favorite/{id}";
 //		"/account/en/v1/{login}/activity/{postId}";
 		
-		if (request.getServletPath().matches("/account/en/v1/[^/]+/favorite/[^/]+") ||
-			 request.getServletPath().matches("/account/en/v1/[^/]+/activity/[^/]+")) {
+		if (request.getServletPath().matches("/en/v1/[^/]+/favorite/[^/]+") ||
+			 request.getServletPath().matches("/en/v1/[^/]+/activity/[^/]+")) {
 			String token = dataCheck.gettingToken(request, "X-Token");
 			if (token == null) {
 				response.sendError(401);
@@ -51,7 +51,7 @@ public class AddDelFavActivFilter implements Filter {
 				response.sendError(401);
 				return;
 			}
-			String login = request.getServletPath().split("/")[4];
+			String login = request.getServletPath().split("/")[3];
 			
 			if(!login.equals(credentials[0])) {
 				response.sendError(403);

@@ -38,7 +38,7 @@ public class LoginFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
 
-		if (request.getServletPath().startsWith("/account/en/v1/login")) {
+		if (request.getServletPath().startsWith("/en/v1/login")) {
 
 			// Getting auth
 			String auth = dataCheck.gettingToken(request, "Authorization");

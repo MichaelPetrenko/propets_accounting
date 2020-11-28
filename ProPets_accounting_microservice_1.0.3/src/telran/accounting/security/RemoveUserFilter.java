@@ -41,7 +41,7 @@ public class RemoveUserFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
 		//String GET_USER_DATA = "/account/en/v1/{login}?dataType=true";
-		if (request.getServletPath().matches("/account/en/v1/[^/]+") && request.getMethod().equalsIgnoreCase("DELETE")) {
+		if (request.getServletPath().matches("/en/v1/[^/]+") && request.getMethod().equalsIgnoreCase("DELETE")) {
 			
 			String token = dataCheck.gettingToken(request, "X-Token");
 			if (token == null) {
@@ -56,7 +56,7 @@ public class RemoveUserFilter implements Filter {
 				return;
 			}
 			
-			String login = request.getServletPath().split("/")[4];
+			String login = request.getServletPath().split("/")[3];
 			
 			if(!login.equals(credentials[0])) {
 				response.sendError(400);

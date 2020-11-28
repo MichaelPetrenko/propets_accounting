@@ -35,7 +35,7 @@ public class EditUserFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
 		
-		if (request.getServletPath().matches("/account/en/v1/1[^/]+")) {
+		if (request.getServletPath().matches("/en/v1/1[^/]+")) {
 			
 			String token = dataCheck.gettingToken(request, "X-Token");
 			if (token == null) {
@@ -50,7 +50,7 @@ public class EditUserFilter implements Filter {
 				return;
 			}
 			
-			String login1 = request.getServletPath().split("/")[4];
+			String login1 = request.getServletPath().split("/")[3];
 			String login = login1.substring(1);
 			
 			if(!login.equals(credentials[0])) {

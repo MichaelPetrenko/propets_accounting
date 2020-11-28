@@ -260,7 +260,6 @@ public class AccountingMongo implements IAccountingManagement {
 		}
 		Activ favorites = user.getFavorites();
 
-		// Немного говнокода :)
 		boolean res = false;
 		if (xServiceName.equalsIgnoreCase("message")) {
 			res = favorites.getMessage().add(postID);
@@ -293,7 +292,6 @@ public class AccountingMongo implements IAccountingManagement {
 		}
 		Activ activities = user.getActivities();
 
-		// Немного говнокода :)
 		boolean res = false;
 		if (xServiceName.equalsIgnoreCase("message")) {
 			res = activities.getMessage().add(postID);
@@ -326,7 +324,6 @@ public class AccountingMongo implements IAccountingManagement {
 		}
 		Activ favorites = user.getFavorites();
 
-		// Немного говнокода :)
 		boolean res = false;
 		if (xServiceName.equalsIgnoreCase("message")) {
 			res = favorites.getMessage().remove(postID);
@@ -360,7 +357,6 @@ public class AccountingMongo implements IAccountingManagement {
 		}
 		Activ activities = user.getActivities();
 
-		// Немного говнокода :)
 		boolean res = false;
 		if (xServiceName.equalsIgnoreCase("message")) {
 			res = activities.getMessage().remove(postID);
