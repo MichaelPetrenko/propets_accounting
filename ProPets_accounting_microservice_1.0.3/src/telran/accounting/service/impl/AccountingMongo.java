@@ -213,7 +213,6 @@ public class AccountingMongo implements IAccountingManagement {
 		if (role == null || role == "") {
 			throw new NoContentException();
 		}
-//		not empty
 
 		boolean flag = false;
 		for (AccountingRoles r : AccountingRoles.values()) {
@@ -225,7 +224,6 @@ public class AccountingMongo implements IAccountingManagement {
 		if (flag == false) {
 			throw new NotExistsException();
 		}
-//		role exists in enum
 
 		if (role.equals(AccountingRoles.USER.toString())) {
 			throw new ForbiddenException();
