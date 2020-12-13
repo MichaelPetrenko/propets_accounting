@@ -152,6 +152,7 @@ public class AccountingMongo implements IAccountingManagement {
 		repository.deleteById(email);
 		ResponseDto responseDto = new ResponseDto(user.getEmail(), user.getName(), user.getAvatar(), user.getPhone(),
 				user.getRoles());
+		//TODO Need to remove all of posts of this removed user.
 		return responseDto;
 	}
 
