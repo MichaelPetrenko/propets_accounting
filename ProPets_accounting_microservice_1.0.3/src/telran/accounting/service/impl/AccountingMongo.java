@@ -1,13 +1,9 @@
 package telran.accounting.service.impl;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -86,7 +82,7 @@ public class AccountingMongo implements IAccountingManagement {
 	}
 
 	@Override
-	public ResponseDto loginUser(String login) throws URISyntaxException {
+	public ResponseDto loginUser(String login) {
 		if (login == null) {
 			throw new NoContentException();
 		}
