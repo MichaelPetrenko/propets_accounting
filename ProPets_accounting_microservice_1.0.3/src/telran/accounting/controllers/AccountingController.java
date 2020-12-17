@@ -152,5 +152,11 @@ public class AccountingController {
 		resp.addHeader("X-Token", newToken );
 		return;
 	}
+	
+	// "/wakeup"
+	@GetMapping(value = AccountingApiConstants.WAKEUP)
+	void wakeUp() {
+		return;
+	}
 
 }
