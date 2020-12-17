@@ -1,15 +1,20 @@
 package telran.accounting.service.impl;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.RequestEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import telran.accounting.api.RegistrationDto;
 import telran.accounting.api.ResponseDto;
+import telran.accounting.api.ResponsePostDto;
 import telran.accounting.api.codes.AlreadyActivatedException;
 import telran.accounting.api.codes.AlreadyExistsException;
 import telran.accounting.api.codes.AlreadyRevokedException;
@@ -155,6 +160,37 @@ public class AccountingMongo implements IAccountingManagement {
 		if (user == null) {
 			throw new NotExistsException();
 		}
+		//=======================
+		HashSet<String> messages = user.getActivities().getMessage();
+		HashSet<String> lostfounds = user.getActivities().getLostFound();
+		
+		//Removing messages
+		if(messages.size()>0) {
+			messages.forEach(m -> {
+				URI uri = null;
+				try {
+					uri = new URI("http://propets-mes.herokuapp.com/en/v1/"+m.toString());
+				} catch (URISyntaxException e) {
+					e.printStackTrace();
+				}
+				restTemplate.exchange(uri, HttpMethod.DELETE, null, ResponsePostDto.class);
+			});
+		}
+		
+		//Removing lostfounds
+		if(lostfounds.size()>0) {
+			lostfounds.forEach(m -> {
+				URI uri = null;
+				try {
+					uri = new URI("http://propets-lfs.herokuapp.com/en/v1/delete/"+m.toString());
+				} catch (URISyntaxException e) {
+					e.printStackTrace();
+				}
+				restTemplate.exchange(uri, HttpMethod.DELETE, null, ResponsePostDto.class);
+			});
+		}
+		
+		//=======================
 		repository.deleteById(email);
 		ResponseDto responseDto = new ResponseDto(user.getEmail(), user.getName(), user.getAvatar(), user.getPhone(),
 				user.getRoles());
