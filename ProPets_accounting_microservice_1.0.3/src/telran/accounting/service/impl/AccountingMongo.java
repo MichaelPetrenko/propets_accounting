@@ -13,8 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import telran.accounting.api.RegistrationDto;
+import telran.accounting.api.ResponceMessagingDto;
 import telran.accounting.api.ResponseDto;
-import telran.accounting.api.ResponsePostDto;
+import telran.accounting.api.ResponseLostFoundPostDto;
 import telran.accounting.api.codes.AlreadyActivatedException;
 import telran.accounting.api.codes.AlreadyExistsException;
 import telran.accounting.api.codes.AlreadyRevokedException;
@@ -173,7 +174,7 @@ public class AccountingMongo implements IAccountingManagement {
 				} catch (URISyntaxException e) {
 					e.printStackTrace();
 				}
-				restTemplate.exchange(uri, HttpMethod.DELETE, null, ResponsePostDto.class);
+				restTemplate.exchange(uri, HttpMethod.DELETE, null, ResponceMessagingDto.class);
 			});
 		}
 		
@@ -186,7 +187,7 @@ public class AccountingMongo implements IAccountingManagement {
 				} catch (URISyntaxException e) {
 					e.printStackTrace();
 				}
-				restTemplate.exchange(uri, HttpMethod.DELETE, null, ResponsePostDto.class);
+				restTemplate.exchange(uri, HttpMethod.DELETE, null, ResponseLostFoundPostDto.class);
 			});
 		}
 		
