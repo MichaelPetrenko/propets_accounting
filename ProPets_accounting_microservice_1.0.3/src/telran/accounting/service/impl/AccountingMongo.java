@@ -2,11 +2,14 @@ package telran.accounting.service.impl;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -174,6 +177,14 @@ public class AccountingMongo implements IAccountingManagement {
 				} catch (URISyntaxException e) {
 					e.printStackTrace();
 				}
+				HttpHeaders headers = new HttpHeaders();
+				headers.setContentType(MediaType.APPLICATION_JSON);
+				headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+				String xToken = "eyJhbGciOiJIUzI1NiJ9.eyJsb2dpbiI6InZhc3lhbkBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYSQxMCRKWUM2WW9tSzdzUzJLTUtJLzBQMS4uWGFhaGtJZDdnMEtsdEZmQUdoekc3ZW5BUkZHczhTVyIsInRpbWVzdGFtcCI6MTYxMDgyOTYzNzA0NCwicm9sZSI6WyJVU0VSIl19.FQpRqGByEUZBaEUveGsf3QD2CMmGBparhSFFgeWIAO4";
+				headers.set("X-Token", xToken);
+				headers.set("X-ServiceName", "lostFound");
+				
+				HttpEntity<Void> request = new HttpEntity<>(headers);
 				restTemplate.exchange(uri, HttpMethod.DELETE, null, ResponceMessagingDto.class);
 			});
 		}
@@ -187,6 +198,14 @@ public class AccountingMongo implements IAccountingManagement {
 				} catch (URISyntaxException e) {
 					e.printStackTrace();
 				}
+				HttpHeaders headers = new HttpHeaders();
+				headers.setContentType(MediaType.APPLICATION_JSON);
+				headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+				String xToken = "eyJhbGciOiJIUzI1NiJ9.eyJsb2dpbiI6InZhc3lhbkBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYSQxMCRKWUM2WW9tSzdzUzJLTUtJLzBQMS4uWGFhaGtJZDdnMEtsdEZmQUdoekc3ZW5BUkZHczhTVyIsInRpbWVzdGFtcCI6MTYxMDgyOTYzNzA0NCwicm9sZSI6WyJVU0VSIl19.FQpRqGByEUZBaEUveGsf3QD2CMmGBparhSFFgeWIAO4";
+				headers.set("X-Token", xToken);
+				headers.set("X-ServiceName", "lostFound");
+				
+				HttpEntity<Void> request = new HttpEntity<>(headers);
 				restTemplate.exchange(uri, HttpMethod.DELETE, null, ResponseLostFoundPostDto.class);
 			});
 		}
