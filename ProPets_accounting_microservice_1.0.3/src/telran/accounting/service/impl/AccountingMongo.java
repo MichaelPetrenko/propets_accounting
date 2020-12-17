@@ -1,10 +1,17 @@
 package telran.accounting.service.impl;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
 import telran.accounting.api.RegistrationDto;
 import telran.accounting.api.ResponseDto;
 import telran.accounting.api.codes.AlreadyActivatedException;
@@ -32,6 +39,9 @@ public class AccountingMongo implements IAccountingManagement {
 
 	@Autowired
 	PasswordEncoder encoder; // Создается в классе SecurityConfiguration
+	
+	@Autowired
+	RestTemplate restTemplate;
 
 	@Override
 	public ResponseDto registerUser(RegistrationDto registrationDto) {
@@ -76,7 +86,7 @@ public class AccountingMongo implements IAccountingManagement {
 	}
 
 	@Override
-	public ResponseDto loginUser(String login) {
+	public ResponseDto loginUser(String login) throws URISyntaxException {
 		if (login == null) {
 			throw new NoContentException();
 		}
@@ -84,6 +94,7 @@ public class AccountingMongo implements IAccountingManagement {
 		if (user == null) {
 			throw new NotExistsException();
 		}
+		wakeUp();
 		return new ResponseDto(user.getEmail(), user.getName(), user.getAvatar(), user.getPhone(), user.getRoles());
 	}
 
@@ -412,5 +423,22 @@ public class AccountingMongo implements IAccountingManagement {
 
 		return tokenService.createToken(user);
 	}
+	
+	String[] uris = {
+//			"http://propets-me.herokuapp.com/wakeup",//D
+			"http://propets-lfs.herokuapp.com/wakeup",//D
+			"http://propets-mes.herokuapp.com/wakeup",//D
+			"http://propets-fav.herokuapp.com/wakeup",//D
+			"http://propets-disp.herokuapp.com/wakeup",//D
+			"http://propets-token.herokuapp.com/wakeup"//D
+			};
 
+	public void wakeUp() throws URISyntaxException {
+		
+		for(int i=0 ; i<uris.length; i++) {
+			URI uri = new URI(uris[i]);
+			ResponseEntity<Void> responce = restTemplate.exchange(uri, HttpMethod.GET, HttpEntity.EMPTY, Void.class);
+			System.out.println("================= "+responce.getStatusCodeValue());
+		}
+	}
 }

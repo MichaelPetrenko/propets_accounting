@@ -1,5 +1,6 @@
 package telran.accounting.controllers;
 
+import java.net.URISyntaxException;
 import java.util.HashSet;
 
 import javax.servlet.http.HttpServletRequest;
@@ -61,7 +62,7 @@ public class AccountingController {
 
 	// "/account/en/v1/login"
 	@PostMapping(value = AccountingApiConstants.LOGIN)
-	ResponseDto login(HttpServletRequest request) {
+	ResponseDto login(HttpServletRequest request) throws URISyntaxException {
 		String auth = request.getHeader("Authorization");
 		String[] credentials = tokenService.validateAuth(auth);
 		return accounting.loginUser(credentials[0]);
