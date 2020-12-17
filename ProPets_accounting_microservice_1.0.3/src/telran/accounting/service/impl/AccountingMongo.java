@@ -94,7 +94,6 @@ public class AccountingMongo implements IAccountingManagement {
 		if (user == null) {
 			throw new NotExistsException();
 		}
-		wakeUp();
 		return new ResponseDto(user.getEmail(), user.getName(), user.getAvatar(), user.getPhone(), user.getRoles());
 	}
 
@@ -424,21 +423,4 @@ public class AccountingMongo implements IAccountingManagement {
 		return tokenService.createToken(user);
 	}
 	
-	String[] uris = {
-//			"http://propets-me.herokuapp.com/wakeup",//D
-			"http://propets-lfs.herokuapp.com/wakeup",//D
-			"http://propets-mes.herokuapp.com/wakeup",//D
-			"http://propets-fav.herokuapp.com/wakeup",//D
-			"http://propets-disp.herokuapp.com/wakeup",//D
-			"http://propets-token.herokuapp.com/wakeup"//D
-			};
-
-	public void wakeUp() throws URISyntaxException {
-		
-		for(int i=0 ; i<uris.length; i++) {
-			URI uri = new URI(uris[i]);
-			ResponseEntity<Void> responce = restTemplate.exchange(uri, HttpMethod.GET, HttpEntity.EMPTY, Void.class);
-			System.out.println("================= "+responce.getStatusCodeValue());
-		}
-	}
 }
