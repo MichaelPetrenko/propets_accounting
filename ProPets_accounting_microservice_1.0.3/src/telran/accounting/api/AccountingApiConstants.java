@@ -18,6 +18,5 @@ public interface AccountingApiConstants {
 	String GET_USER_DATA = 			"/en/v1/{login}";
 	//String GET_USER_DATA = "/account/en/v1/{login}?dataType=true";
 	String TOKEN_VALIDATION = 		"/en/v1/token/validation";
-	String WAKEUP = 				"/wakeup";
 
 }
