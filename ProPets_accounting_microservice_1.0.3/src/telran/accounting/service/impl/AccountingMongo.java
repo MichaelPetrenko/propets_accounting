@@ -195,7 +195,7 @@ public class AccountingMongo implements IAccountingManagement {
 			});
 		}
 		if (lostfounds.size() > 0) {
-			String endPointMessage = "http://propets-lfs.herokuapp.com/en/v1/delete";
+			String endPointMessage = "http://propets-lfs.herokuapp.com/en/v1/delete/";
 			lostfounds.forEach(m -> {
 				try {
 					String endPointDeleteMessage = endPointMessage+m.toString();
