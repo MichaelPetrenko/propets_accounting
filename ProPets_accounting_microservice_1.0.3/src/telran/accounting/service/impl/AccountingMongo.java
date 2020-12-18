@@ -198,25 +198,26 @@ public class AccountingMongo implements IAccountingManagement {
 		}
 
 		// Removing lostfounds
-		if (lostfounds.size() > 0) {
-			lostfounds.forEach(m -> {
-				URI uri = null;
-				try {
-					uri = new URI("http://propets-lfs.herokuapp.com/en/v1/delete/" + m.toString());
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
-				}
-				HttpHeaders headers = new HttpHeaders();
-				headers.setContentType(MediaType.APPLICATION_JSON);
-				headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-				String xToken = "eyJhbGciOiJIUzI1NiJ9.eyJsb2dpbiI6InZhc3lhbkBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYSQxMCRKWUM2WW9tSzdzUzJLTUtJLzBQMS4uWGFhaGtJZDdnMEtsdEZmQUdoekc3ZW5BUkZHczhTVyIsInRpbWVzdGFtcCI6MTYxMDgyOTYzNzA0NCwicm9sZSI6WyJVU0VSIl19.FQpRqGByEUZBaEUveGsf3QD2CMmGBparhSFFgeWIAO4";
-				headers.set("X-Token", xToken);
-				headers.set("X-ServiceName", "lostFound");
-
-				HttpEntity<Void> request = new HttpEntity<>(headers);
-				restTemplate.exchange(uri, HttpMethod.DELETE, null, ResponseLostFoundPostDto.class);
-			});
-		}
+//		if (lostfounds.size() > 0) {
+//			lostfounds.forEach(m -> {
+//				
+//				URI uri = null;
+//				try {
+//					uri = new URI("http://propets-lfs.herokuapp.com/en/v1/delete/" + m.toString());
+//				} catch (URISyntaxException e) {
+//					e.printStackTrace();
+//				}
+//				HttpHeaders headers = new HttpHeaders();
+//				headers.setContentType(MediaType.APPLICATION_JSON);
+//				headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+//				String xToken = "eyJhbGciOiJIUzI1NiJ9.eyJsb2dpbiI6InZhc3lhbkBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYSQxMCRKWUM2WW9tSzdzUzJLTUtJLzBQMS4uWGFhaGtJZDdnMEtsdEZmQUdoekc3ZW5BUkZHczhTVyIsInRpbWVzdGFtcCI6MTYxMDgyOTYzNzA0NCwicm9sZSI6WyJVU0VSIl19.FQpRqGByEUZBaEUveGsf3QD2CMmGBparhSFFgeWIAO4";
+//				headers.set("X-Token", xToken);
+//				headers.set("X-ServiceName", "lostFound");
+//
+//				HttpEntity<Void> request = new HttpEntity<>(headers);
+//				restTemplate.exchange(uri, HttpMethod.DELETE, null, ResponseLostFoundPostDto.class);
+//			});
+//		}
 
 		// =======================
 		repository.deleteById(email);
