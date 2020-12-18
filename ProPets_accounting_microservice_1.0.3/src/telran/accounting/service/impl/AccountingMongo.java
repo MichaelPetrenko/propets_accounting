@@ -1,7 +1,6 @@
 package telran.accounting.service.impl;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.HashSet;
 
@@ -10,7 +9,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,9 +18,7 @@ import org.springframework.web.client.HttpClientErrorException.Forbidden;
 import org.springframework.web.client.HttpClientErrorException.Unauthorized;
 
 import telran.accounting.api.RegistrationDto;
-import telran.accounting.api.ResponceMessagingDto;
 import telran.accounting.api.ResponseDto;
-import telran.accounting.api.ResponseLostFoundPostDto;
 import telran.accounting.api.codes.AlreadyActivatedException;
 import telran.accounting.api.codes.AlreadyExistsException;
 import telran.accounting.api.codes.AlreadyRevokedException;
@@ -30,12 +26,15 @@ import telran.accounting.api.codes.ForbiddenException;
 import telran.accounting.api.codes.NoContentException;
 import telran.accounting.api.codes.NotExistsException;
 import telran.accounting.api.EditUserDto;
+
 import telran.accounting.domain.dao.AccountsRepository;
 import telran.accounting.domain.entities.AccountEntity;
 import telran.accounting.domain.entities.AccountingRoles;
 import telran.accounting.domain.entities.Activ;
+
 import telran.accounting.service.TokenService;
 import telran.accounting.service.interfaces.IAccountingManagement;
+
 import telran.accounting.api.codes.BadRequestException;
 import telran.accounting.api.codes.BadTokenException;
 import telran.accounting.api.codes.BadURIException;
@@ -173,15 +172,34 @@ public class AccountingMongo implements IAccountingManagement {
 			throw new NotExistsException();
 		}
 
-		// =======================
 		HashSet<String> messages = user.getActivities().getMessage();
 		HashSet<String> lostfounds = user.getActivities().getLostFound();
-
-		// Removing messages
+		
 		if (messages.size() > 0) {
+			String endPointMessage = "http://propets-mes.herokuapp.com/en/v1/";
 			messages.forEach(m -> {
 				try {
-					deleteMessagesByUser(m.toString(), xToken);
+					String endPointDeleteMessage = endPointMessage+m.toString();
+					deleteMessagesByUser(endPointDeleteMessage, xToken);
+				} catch (Exception e) {
+					e.getStackTrace();
+					if (e instanceof Forbidden) {
+						throw new ForbiddenException();
+					} else if (e instanceof Unauthorized) {
+						throw new BadTokenException();
+					} else if (e instanceof BadRequest) {
+						throw new BadRequestException();
+					} else
+					throw new NotExistsException();
+				}
+			});
+		}
+		if (lostfounds.size() > 0) {
+			String endPointMessage = "http://propets-lfs.herokuapp.com/en/v1/";
+			lostfounds.forEach(m -> {
+				try {
+					String endPointDeleteMessage = endPointMessage+m.toString();
+					deleteMessagesByUser(endPointDeleteMessage, xToken);
 				} catch (Exception e) {
 					e.getStackTrace();
 					if (e instanceof Forbidden) {
@@ -196,38 +214,13 @@ public class AccountingMongo implements IAccountingManagement {
 			});
 		}
 
-		// Removing lostfounds
-//		if (lostfounds.size() > 0) {
-//			lostfounds.forEach(m -> {
-//				
-//				URI uri = null;
-//				try {
-//					uri = new URI("http://propets-lfs.herokuapp.com/en/v1/delete/" + m.toString());
-//				} catch (URISyntaxException e) {
-//					e.printStackTrace();
-//				}
-//				HttpHeaders headers = new HttpHeaders();
-//				headers.setContentType(MediaType.APPLICATION_JSON);
-//				headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-//				String xToken = "eyJhbGciOiJIUzI1NiJ9.eyJsb2dpbiI6InZhc3lhbkBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYSQxMCRKWUM2WW9tSzdzUzJLTUtJLzBQMS4uWGFhaGtJZDdnMEtsdEZmQUdoekc3ZW5BUkZHczhTVyIsInRpbWVzdGFtcCI6MTYxMDgyOTYzNzA0NCwicm9sZSI6WyJVU0VSIl19.FQpRqGByEUZBaEUveGsf3QD2CMmGBparhSFFgeWIAO4";
-//				headers.set("X-Token", xToken);
-//				headers.set("X-ServiceName", "lostFound");
-//
-//				HttpEntity<Void> request = new HttpEntity<>(headers);
-//				restTemplate.exchange(uri, HttpMethod.DELETE, null, ResponseLostFoundPostDto.class);
-//			});
-//		}
-
-		// =======================
 		repository.deleteById(email);
 		ResponseDto responseDto = new ResponseDto(user.getEmail(), user.getName(), user.getAvatar(), user.getPhone(),
 				user.getRoles());
 		return responseDto;
 	}
 
-	private void deleteMessagesByUser(String m, String xToken) {
-		
-		String endPointDeleteMessage = "http://propets-mes.herokuapp.com/en/v1/" + m;
+	private void deleteMessagesByUser(String endPointDeleteMessage, String xToken) {
 		
 		URI uri = null;
 		try {
@@ -240,10 +233,6 @@ public class AccountingMongo implements IAccountingManagement {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-//		String xToken = "eyJhbGciOiJIUzI1NiJ9."
-//				+ "eyJsb2dpbiI6InZhc3lhbkBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYSQxMCRjOTVFLi52"
-//				+ "cTg3VDNKbzl6dUpud21lSGJjUEswSEVqV3R2VndHbkdNU1RLMDU4b003MlJyUyIsInRpbWVz"
-//				+ "dGFtcCI6MTYxMDg5NzkzOTg0MSwicm9sZSI6WyJVU0VSIl19.8co-xCzGDxqZ3oGgvDoVlrm7uzjNkeTgO-lYSFx4DD0";
 		headers.set("X-Token", xToken);
 
 		HttpEntity<Void> request = new HttpEntity<>(headers);
