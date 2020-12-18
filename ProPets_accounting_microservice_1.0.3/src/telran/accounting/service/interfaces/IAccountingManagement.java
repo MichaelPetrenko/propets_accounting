@@ -11,10 +11,10 @@ import telran.accounting.api.EditUserDto;
 public interface IAccountingManagement {
 	
 	ResponseDto registerUser(RegistrationDto registrationDto);							//DONE TESTED FINAL ret
-	ResponseDto loginUser(String login) throws URISyntaxException; 												//DONE TESTED FINAL ret & Auth
+	ResponseDto loginUser(String login) throws URISyntaxException; 						//DONE TESTED FINAL ret & Auth
 	ResponseDto getUserInformation(String email);										//DONE TESTED FINAL get ret - NOW ONLY USER GETS INFO
 	ResponseDto editUserProfile(String email, EditUserDto editUserDto);					//DONE TESTED FINAL get ret
-	ResponseDto removeUser(String email);												//DONE TESTED FINAL ret
+	ResponseDto removeUser(String email, String xToken);								//DONE TESTED FINAL ret
 	boolean revokeAccount(String email, boolean status);								//DONE TESTED FINAL ret
 	Object[] addRole(String email, String role);										//DONE TESTED FINAL get ret
 	Object[] removeRole(String email, String role);										//DONE TESTED FINAL get ret

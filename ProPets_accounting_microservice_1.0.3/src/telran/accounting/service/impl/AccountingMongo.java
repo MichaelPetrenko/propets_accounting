@@ -166,7 +166,7 @@ public class AccountingMongo implements IAccountingManagement {
 	}
 
 	@Override
-	public ResponseDto removeUser(String email) {
+	public ResponseDto removeUser(String email, String xToken) {
 
 		AccountEntity user = repository.findById(email).orElse(null);
 		if (user == null) {
@@ -181,13 +181,12 @@ public class AccountingMongo implements IAccountingManagement {
 		if (messages.size() > 0) {
 			messages.forEach(m -> {
 				try {
-					deleteMessagesByUser(m.toString());
+					deleteMessagesByUser(m.toString(), xToken);
 				} catch (Exception e) {
 					e.getStackTrace();
 					if (e instanceof Forbidden) {
 						throw new ForbiddenException();
 					} else if (e instanceof Unauthorized) {
-						System.out.println("if unauth case");
 						throw new BadTokenException();
 					} else if (e instanceof BadRequest) {
 						throw new BadRequestException();
@@ -226,7 +225,7 @@ public class AccountingMongo implements IAccountingManagement {
 		return responseDto;
 	}
 
-	private void deleteMessagesByUser(String m) {
+	private void deleteMessagesByUser(String m, String xToken) {
 		
 		String endPointDeleteMessage = "http://propets-mes.herokuapp.com/en/v1/" + m;
 		
@@ -241,16 +240,15 @@ public class AccountingMongo implements IAccountingManagement {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-		String xToken = "eyJhbGciOiJIUzI1NiJ9."
-				+ "eyJsb2dpbiI6InZhc3lhbkBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYSQxMCRjOTVFLi52"
-				+ "cTg3VDNKbzl6dUpud21lSGJjUEswSEVqV3R2VndHbkdNU1RLMDU4b003MlJyUyIsInRpbWVz"
-				+ "dGFtcCI6MTYxMDg5NzkzOTg0MSwicm9sZSI6WyJVU0VSIl19.8co-xCzGDxqZ3oGgvDoVlrm7uzjNkeTgO-lYSFx4DD0";
+//		String xToken = "eyJhbGciOiJIUzI1NiJ9."
+//				+ "eyJsb2dpbiI6InZhc3lhbkBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYSQxMCRjOTVFLi52"
+//				+ "cTg3VDNKbzl6dUpud21lSGJjUEswSEVqV3R2VndHbkdNU1RLMDU4b003MlJyUyIsInRpbWVz"
+//				+ "dGFtcCI6MTYxMDg5NzkzOTg0MSwicm9sZSI6WyJVU0VSIl19.8co-xCzGDxqZ3oGgvDoVlrm7uzjNkeTgO-lYSFx4DD0";
 		headers.set("X-Token", xToken);
-//		headers.set("X-ServiceName", "lostFound");
 
 		HttpEntity<Void> request = new HttpEntity<>(headers);
-//		restTemplate.exchange(uri, HttpMethod.DELETE, null, ResponceMessagingDto.class);
-		ResponseEntity<Void> responceFromAddUserActivity = restTemplate.exchange(uri, HttpMethod.DELETE, request,
+		@SuppressWarnings("unused")
+		ResponseEntity<Void> responceFromDeletedPosts = restTemplate.exchange(uri, HttpMethod.DELETE, request,
 				Void.class);
 
 	}

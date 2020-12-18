@@ -82,8 +82,9 @@ public class AccountingController {
 
 	// "/account/en/v1/{login}"
 	@DeleteMapping(value = AccountingApiConstants.REMOVE_USER)
-	ResponseDto removeUser(@PathVariable("login") String login) {
-		return accounting.removeUser(login);
+	ResponseDto removeUser(@PathVariable("login") String login, HttpServletRequest request) {
+		String xToken = request.getHeader("X-Token");
+		return accounting.removeUser(login, xToken);
 	}
 
 	// "/account/en/v1/{userLogin}/role/{role}"
