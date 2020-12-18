@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -32,6 +33,7 @@ import telran.accounting.domain.entities.AccountingRoles;
 import telran.accounting.domain.entities.Activ;
 import telran.accounting.service.TokenService;
 import telran.accounting.service.interfaces.IAccountingManagement;
+import telran.accounting.api.codes.BadURIException;
 
 @Service
 public class AccountingMongo implements IAccountingManagement {
@@ -44,20 +46,20 @@ public class AccountingMongo implements IAccountingManagement {
 
 	@Autowired
 	PasswordEncoder encoder; // Создается в классе SecurityConfiguration
-	
+
 	@Autowired
 	RestTemplate restTemplate;
 
 	@Override
 	public ResponseDto registerUser(RegistrationDto registrationDto) {
-		if(!checkRegistrationDto(registrationDto)) {
+		if (!checkRegistrationDto(registrationDto)) {
 			throw new NoContentException();
 		}
 
-		if(repository.existsById(registrationDto.email)) {
+		if (repository.existsById(registrationDto.email)) {
 			throw new AlreadyExistsException();
 		}
-		
+
 		String pass = encoder.encode(registrationDto.password);
 		AccountEntity newUser = new AccountEntity(registrationDto.email, registrationDto.name, pass);
 
@@ -67,24 +69,24 @@ public class AccountingMongo implements IAccountingManagement {
 
 		return responseDto;
 	}
-	
+
 	private boolean checkRegistrationDto(RegistrationDto regDto) {
-		if(regDto.email==null) {
+		if (regDto.email == null) {
 			return false;
 		}
-		if(!regDto.email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-			return false;
-		}	
-		if(regDto.password == null || regDto.password == "") {
+		if (!regDto.email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
 			return false;
 		}
-		if(!regDto.password.matches("\\S{5,}")) {
+		if (regDto.password == null || regDto.password == "") {
 			return false;
 		}
-		if(regDto.name == null || regDto.name == "") {
+		if (!regDto.password.matches("\\S{5,}")) {
 			return false;
 		}
-		if(!regDto.name.matches("[A-Za-z0-9]+ [A-Za-z0-9]+")) {
+		if (regDto.name == null || regDto.name == "") {
+			return false;
+		}
+		if (!regDto.name.matches("[A-Za-z0-9]+ [A-Za-z0-9]+")) {
 			return false;
 		}
 		return true;
@@ -122,8 +124,8 @@ public class AccountingMongo implements IAccountingManagement {
 		if (user == null) {
 			throw new NotExistsException();
 		}
-		
-		if(!checkEditUserDto(editUserDto)) {
+
+		if (!checkEditUserDto(editUserDto)) {
 			throw new NoContentException();
 		}
 
@@ -144,57 +146,45 @@ public class AccountingMongo implements IAccountingManagement {
 				user.getRoles());
 		return responseDto;
 	}
-	
+
 	private boolean checkEditUserDto(EditUserDto editUserDto) {
-		if(!editUserDto.name.matches("[A-Za-z0-9]+ [A-Za-z0-9]+")) {
+		if (!editUserDto.name.matches("[A-Za-z0-9]+ [A-Za-z0-9]+")) {
 			return false;
 		}
-		if(!editUserDto.phone.matches("\\+?[0-9]+")) {
+		if (!editUserDto.phone.matches("\\+?[0-9]+")) {
 			return false;
 		}
-		if(editUserDto.avatar.length()==0) {
+		if (editUserDto.avatar.length() == 0) {
 			editUserDto.avatar = "http://gravatar.com/avatar/0?d=mp";
-		}		
+		}
 		return true;
 	}
 
 	@Override
 	public ResponseDto removeUser(String email) {
+
 		AccountEntity user = repository.findById(email).orElse(null);
 		if (user == null) {
 			throw new NotExistsException();
 		}
-		//=======================
+
+		// =======================
 		HashSet<String> messages = user.getActivities().getMessage();
 		HashSet<String> lostfounds = user.getActivities().getLostFound();
-		
-		//Removing messages
-		if(messages.size()>0) {
+
+		// Removing messages
+		if (messages.size() > 0) {
 			messages.forEach(m -> {
-				URI uri = null;
-				try {
-					uri = new URI("http://propets-mes.herokuapp.com/en/v1/"+m.toString());
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
-				}
-				HttpHeaders headers = new HttpHeaders();
-				headers.setContentType(MediaType.APPLICATION_JSON);
-				headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-				String xToken = "eyJhbGciOiJIUzI1NiJ9.eyJsb2dpbiI6InZhc3lhbkBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYSQxMCRKWUM2WW9tSzdzUzJLTUtJLzBQMS4uWGFhaGtJZDdnMEtsdEZmQUdoekc3ZW5BUkZHczhTVyIsInRpbWVzdGFtcCI6MTYxMDgyOTYzNzA0NCwicm9sZSI6WyJVU0VSIl19.FQpRqGByEUZBaEUveGsf3QD2CMmGBparhSFFgeWIAO4";
-				headers.set("X-Token", xToken);
-				headers.set("X-ServiceName", "lostFound");
-				
-				HttpEntity<Void> request = new HttpEntity<>(headers);
-				restTemplate.exchange(uri, HttpMethod.DELETE, null, ResponceMessagingDto.class);
+				deleteMessagesByUser(m.toString());
 			});
 		}
-		
-		//Removing lostfounds
-		if(lostfounds.size()>0) {
+
+		// Removing lostfounds
+		if (lostfounds.size() > 0) {
 			lostfounds.forEach(m -> {
 				URI uri = null;
 				try {
-					uri = new URI("http://propets-lfs.herokuapp.com/en/v1/delete/"+m.toString());
+					uri = new URI("http://propets-lfs.herokuapp.com/en/v1/delete/" + m.toString());
 				} catch (URISyntaxException e) {
 					e.printStackTrace();
 				}
@@ -204,18 +194,46 @@ public class AccountingMongo implements IAccountingManagement {
 				String xToken = "eyJhbGciOiJIUzI1NiJ9.eyJsb2dpbiI6InZhc3lhbkBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYSQxMCRKWUM2WW9tSzdzUzJLTUtJLzBQMS4uWGFhaGtJZDdnMEtsdEZmQUdoekc3ZW5BUkZHczhTVyIsInRpbWVzdGFtcCI6MTYxMDgyOTYzNzA0NCwicm9sZSI6WyJVU0VSIl19.FQpRqGByEUZBaEUveGsf3QD2CMmGBparhSFFgeWIAO4";
 				headers.set("X-Token", xToken);
 				headers.set("X-ServiceName", "lostFound");
-				
+
 				HttpEntity<Void> request = new HttpEntity<>(headers);
 				restTemplate.exchange(uri, HttpMethod.DELETE, null, ResponseLostFoundPostDto.class);
 			});
 		}
-		
-		//=======================
+
+		// =======================
 		repository.deleteById(email);
 		ResponseDto responseDto = new ResponseDto(user.getEmail(), user.getName(), user.getAvatar(), user.getPhone(),
 				user.getRoles());
-		//TODO Need to remove all of posts of this removed user.
 		return responseDto;
+	}
+
+	private void deleteMessagesByUser(String m) {
+		
+		String endPointDeleteMessage = "http://propets-mes.herokuapp.com/en/v1/" + m;
+		
+		URI uri = null;
+		try {
+			uri = new URI(endPointDeleteMessage);
+		} catch (Exception e) {
+			System.out.println("Error URI");
+			throw new BadURIException();
+		}
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+		String xToken = "eyJhbGciOiJIUzI1NiJ9."
+				+ "eyJsb2dpbiI6InZhc3lhbkBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYSQxMCRjOTVFLi52"
+				+ "cTg3VDNKbzl6dUpud21lSGJjUEswSEVqV3R2VndHbkdNU1RLMDU4b003MlJyUyIsInRpbWVz"
+				+ "dGFtcCI6MTYxMDg5NzkzOTg0MSwicm9sZSI6WyJVU0VSIl19.8co-xCzGDxqZ3oGgvDoVlrm7uzjNkeTgO-lYSFx4DD0";
+		headers.set("X-Token", xToken);
+//		headers.set("X-ServiceName", "lostFound");
+
+		HttpEntity<Void> request = new HttpEntity<>(headers);
+//		restTemplate.exchange(uri, HttpMethod.DELETE, null, ResponceMessagingDto.class);
+		ResponseEntity<Void> responceFromAddUserActivity = restTemplate.exchange(uri, HttpMethod.DELETE, request,
+				Void.class);
+
 	}
 
 	@Override
@@ -474,5 +492,5 @@ public class AccountingMongo implements IAccountingManagement {
 
 		return tokenService.createToken(user);
 	}
-	
+
 }
