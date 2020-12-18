@@ -15,6 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.HttpClientErrorException.BadRequest;
+import org.springframework.web.client.HttpClientErrorException.Forbidden;
+import org.springframework.web.client.HttpClientErrorException.Unauthorized;
 
 import telran.accounting.api.RegistrationDto;
 import telran.accounting.api.ResponceMessagingDto;
@@ -33,6 +36,8 @@ import telran.accounting.domain.entities.AccountingRoles;
 import telran.accounting.domain.entities.Activ;
 import telran.accounting.service.TokenService;
 import telran.accounting.service.interfaces.IAccountingManagement;
+import telran.accounting.api.codes.BadRequestException;
+import telran.accounting.api.codes.BadTokenException;
 import telran.accounting.api.codes.BadURIException;
 
 @Service
@@ -175,7 +180,20 @@ public class AccountingMongo implements IAccountingManagement {
 		// Removing messages
 		if (messages.size() > 0) {
 			messages.forEach(m -> {
-				deleteMessagesByUser(m.toString());
+				try {
+					deleteMessagesByUser(m.toString());
+				} catch (Exception e) {
+					e.getStackTrace();
+					if (e instanceof Forbidden) {
+						throw new ForbiddenException();
+					} else if (e instanceof Unauthorized) {
+						System.out.println("if unauth case");
+						throw new BadTokenException();
+					} else if (e instanceof BadRequest) {
+						throw new BadRequestException();
+					} else
+					throw new NotExistsException();
+				}
 			});
 		}
 
