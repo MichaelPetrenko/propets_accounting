@@ -174,15 +174,21 @@ public class AccountingMongo implements IAccountingManagement {
 
 		HashSet<String> messages = user.getActivities().getMessage();
 		HashSet<String> lostfounds = user.getActivities().getLostFound();
-		
+		//
+		System.out.println("=========== Before mes");
 		if (messages.size() > 0) {
 			String endPointMessage = "http://propets-mes.herokuapp.com/en/v1/";
 			messages.forEach(m -> {
 				try {
+					//
+					System.out.println("========= m= "+m);
 					String endPointDeleteMessage = endPointMessage+m.toString();
+					//
+					System.out.println("========= endpoint "+endPointDeleteMessage);
 					deleteMessagesByUser(endPointDeleteMessage, xToken);
 				} catch (Exception e) {
 					e.getStackTrace();
+					e.printStackTrace();
 					if (e instanceof Forbidden) {
 						throw new ForbiddenException();
 					} else if (e instanceof Unauthorized) {
@@ -194,11 +200,12 @@ public class AccountingMongo implements IAccountingManagement {
 				}
 			});
 		}
+	
 		if (lostfounds.size() > 0) {
 			String endPointMessage = "http://propets-lfs.herokuapp.com/en/v1/delete/";
 			lostfounds.forEach(m -> {
 				try {
-					String endPointDeleteMessage = endPointMessage+m.toString();
+					String endPointDeleteMessage = endPointMessage+m.toString();					
 					deleteMessagesByUser(endPointDeleteMessage, xToken);
 				} catch (Exception e) {
 					e.getStackTrace();
