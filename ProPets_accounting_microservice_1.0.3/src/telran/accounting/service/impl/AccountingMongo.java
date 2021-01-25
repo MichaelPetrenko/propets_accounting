@@ -174,6 +174,7 @@ public class AccountingMongo implements IAccountingManagement {
 
 		HashSet<String> messages = user.getActivities().getMessage();
 		HashSet<String> lostfounds = user.getActivities().getLostFound();
+//		HashSet<String> hotels = user.getActivities().getHotels(); //TODO
 
 		if (messages.size() > 0) {
 			String endPointMessage = "http://propets-mes.herokuapp.com/en/v1/";
@@ -214,6 +215,8 @@ public class AccountingMongo implements IAccountingManagement {
 					throw new NotExistsException();
 				}
 			});
+			
+			//TODO Third block of deleting;
 		}
 
 		repository.deleteById(email);
